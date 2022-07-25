@@ -1,0 +1,6 @@
+spring:
+  kafka:
+    consumer:
+      group-id: test
+    template:
+      default-topic: test

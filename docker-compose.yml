@@ -1,0 +1,75 @@
+version: "3.8"
+
+networks:
+  klistener:
+
+services:
+  klistener:
+    networks:
+      - klistener
+    container_name: klistener
+    build: ./
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_KAFKA_BOOTSTRAPSERVERS: "http://kafka:9092"
+      SPRING_KAFKA_TEMPLATE_DEFAULTTOPIC: poc
+      SPRING_KAFKA_CONSUMER_GROUPID: poc
+      SPRING_KAFKA_CONSUMER_PROPERTIES_MAX_POLL_INTERVAL_MS: 1000
+
+  zookeeper:
+    networks:
+      - klistener
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    networks:
+      - klistener
+    container_name: kafka
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  akhq:
+    networks:
+      - klistener
+    container_name: akhq
+    image: tchiotludo/akhq
+    depends_on:
+      - broker
+    ports:
+      - "8081:8080"
+    entrypoint: ''
+    command: |-
+      sh -c 'echo "$${AKHQ_CONFIGURATION}" > /app/application.yml && ./akhq > /dev/null 2>&1'
+    environment:
+      AKHQ_CONFIGURATION: |-
+        {
+          "akhq": {
+            "connections": {
+              "docker-kafka-server": {
+                "schema-registry": {
+                  "url": "http://schema-registry:8085"
+                },
+                "properties": {
+                  "bootstrap.servers": "http://kafka:9092"
+                },
+                "connect": [{
+                  "url": "http://connect:8083",
+                  "name": "connect"
+                }]
+              }
+            }
+          }
+        }

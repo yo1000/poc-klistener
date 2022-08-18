@@ -19,8 +19,8 @@ And it will repeat 5 times.
 curl -X POST \
   -H "Content-Type: application/vnd.kafka.json.v2+json" \
   -d '{
-      "records": [{
-        "value": {"foo":"bar"}
+    "records": [{
+      "value": {"foo":"bar"}
     }]
   }' \
   'localhost:8082/topics/poc'

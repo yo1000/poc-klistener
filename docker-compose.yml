@@ -16,6 +16,7 @@ services:
       SPRING_KAFKA_TEMPLATE_DEFAULTTOPIC: poc
       SPRING_KAFKA_CONSUMER_GROUPID: poc
       SPRING_KAFKA_CONSUMER_PROPERTIES_MAX_POLL_INTERVAL_MS: 1000
+      SPRING_KAFKA_CONSUMER_MAXPOLLRECORDS: 1
 
   zookeeper:
     networks:
@@ -36,10 +37,25 @@ services:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_DEFAULT_REPLICATION_FACTOR: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  rest:
+    networks:
+      - klistener
+    container_name: rest
+    image: confluentinc/cp-kafka-rest
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_REST_LISTENERS: http://0.0.0.0:8082
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8085
+      KAFKA_REST_BOOTSTRAP_SERVERS: http://kafka:9092
+    ports:
+      - "8082:8082"
 
   akhq:
     networks:

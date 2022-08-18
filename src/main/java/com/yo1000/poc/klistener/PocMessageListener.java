@@ -1,6 +1,8 @@
 package com.yo1000.poc.klistener;
 
 import org.apache.kafka.clients.admin.NewTopic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -10,9 +12,18 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
+
 @Component
 public class PocMessageListener {
-    private static int counter = 0;
+    private final Logger logger = LoggerFactory.getLogger(PocMessageListener.class);
+    private int counter = 1;
+
+    private KafkaProperties kafkaProps;
+
+    public PocMessageListener(KafkaProperties kafkaProps) {
+        this.kafkaProps = kafkaProps;
+    }
 
     /**
      * TODO: https://docs.spring.io/spring-kafka/docs/2.2.0.RC1/reference/html/_reference.html#stateful-retry
@@ -33,16 +44,29 @@ public class PocMessageListener {
             @Header(KafkaHeaders.GROUP_ID) String groupId,
             @Header(KafkaHeaders.OFFSET) int offset
     ) throws InterruptedException {
-        if (counter++ == 5) {
-            System.out.println("sleep 300sec");
-            Thread.sleep(300_000L);
+        logger.info("---- Start Listen ----");
+        logger.info("Listen counter: {}", counter);
+        logger.info("Value: {}", value);
+        logger.info("Topic: {}", topic);
+        logger.info("GroupId: {}", groupId);
+        logger.info("Offset: {}", offset);
+
+        if (counter++ % 5 == 0) {
+            logger.info("<sleep 10sec>");
+            Thread.sleep(10_000L);
         }
 
-        System.out.println(value);
+        logger.info("---- End Listen ----");
     }
 
     @Bean
     public NewTopic pocTopic(KafkaProperties props) {
         return TopicBuilder.name(props.getTemplate().getDefaultTopic()).build();
     }
+
+    @Bean
+    public NewTopic dltTopic(KafkaProperties props) {
+        return TopicBuilder.name("DLT").build();
+    }
+
 }

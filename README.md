@@ -12,6 +12,13 @@ Build sources and run containers.
 ```
 
 ### Second
+Watch health-check.
+
+```shell
+watch 'curl localhost:8080/actuator/health'
+```
+
+### Third
 Produce message to `poc` topic.
 And it will repeat 5 times.
 
@@ -26,5 +33,5 @@ curl -X POST \
   'localhost:8082/topics/poc'
 ```
 
-### Third
+### Fourth
 Check console logs.

@@ -6,35 +6,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
-import java.text.MessageFormat;
-
 @Component
-public class PocMessageListener {
-    private final Logger logger = LoggerFactory.getLogger(PocMessageListener.class);
+public class MessageListener {
+    private final Logger logger = LoggerFactory.getLogger(MessageListener.class);
     private int counter = 1;
 
-    private KafkaProperties kafkaProps;
-
-    public PocMessageListener(KafkaProperties kafkaProps) {
-        this.kafkaProps = kafkaProps;
+    public MessageListener(
+            KafkaProperties kafkaProps,
+            ConcurrentKafkaListenerContainerFactory<?, ?> kafkaListenerContainerFactory
+    ) {
+        kafkaListenerContainerFactory.setErrorHandler((e, consumerRecord) -> HealthyContainer.getInstance().healthy());
     }
 
-    /**
-     * TODO: https://docs.spring.io/spring-kafka/docs/2.2.0.RC1/reference/html/_reference.html#stateful-retry
-     * TODO: https://stackoverflow.com/questions/51831034/spring-kafka-how-to-retry-with-kafkalistener
-     *
-     * @param value
-     * @param topic
-     * @param groupId
-     * @param offset
-     * @throws InterruptedException
-     */
     @KafkaListener(
             topics = {"${spring.kafka.template.default-topic}"}
     )
@@ -63,10 +53,4 @@ public class PocMessageListener {
     public NewTopic pocTopic(KafkaProperties props) {
         return TopicBuilder.name(props.getTemplate().getDefaultTopic()).build();
     }
-
-    @Bean
-    public NewTopic dltTopic(KafkaProperties props) {
-        return TopicBuilder.name("DLT").build();
-    }
-
 }

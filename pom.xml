@@ -5,9 +5,18 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-<!--		<version>2.7.1</version>--><!-- 2.8.7 -->
-		<version>2.6.4</version><!-- 2.8.3 -->
-		<!--		<version>2.5.3</version>-->
+		<!-- Spring Boot 2.7.1 | org.springframework.kafka:spring-kafka:2.8.7 -->
+		<!-- Spring Boot 2.7.1 | org.apache.kafka:kafka-clients:3.1.1 -->
+<!--		<version>2.7.1</version>-->
+
+		<!-- Spring Boot 2.6.4 | org.springframework.kafka:spring-kafka:2.8.3 -->
+		<!-- Spring Boot 2.6.4 | org.apache.kafka:kafka-clients:3.0.0 -->
+		<!--<version>2.6.4</version>-->
+
+		<!-- Spring Boot 2.5.3 | org.springframework.kafka:spring-kafka:2.7.4 -->
+		<!-- Spring Boot 2.5.3 | org.apache.kafka:kafka-clients:2.7.1 -->
+		<version>2.5.3</version>
+
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.yo1000</groupId>
@@ -22,6 +31,18 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>

@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Disabled
 @SpringBootTest
-class PocKlistenerApplicationTests {
+class KafkaListenerApplicationTests {
 
 	@Test
 	void contextLoads() {

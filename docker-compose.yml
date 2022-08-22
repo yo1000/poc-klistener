@@ -17,6 +17,8 @@ services:
       SPRING_KAFKA_CONSUMER_GROUPID: poc
       SPRING_KAFKA_CONSUMER_PROPERTIES_MAX_POLL_INTERVAL_MS: 1000
       SPRING_KAFKA_CONSUMER_MAXPOLLRECORDS: 1
+      SPRING_KAFKA_CONSUMER_AUTOOFFSETRESET: earliest
+      SPRING_KAFKA_ENABLEAUTOCOMMIT: "true"
 
   zookeeper:
     networks:
@@ -63,7 +65,7 @@ services:
     container_name: akhq
     image: tchiotludo/akhq
     depends_on:
-      - broker
+      - kafka
     ports:
       - "8081:8080"
     entrypoint: ''
